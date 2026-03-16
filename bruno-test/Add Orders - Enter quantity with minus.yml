@@ -1,0 +1,38 @@
+info:
+  name: Add Orders - Enter quantity with minus
+  type: http
+  seq: 9
+
+http:
+  method: POST
+  url: "{{baseUrl}}/orders"
+  body:
+    type: json
+    data: |-
+      {
+        "itemId": {{itemId}},
+        "quantity": {{itemQuantity}}
+      }
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+runtime:
+  variables:
+    - name: itemId
+      value: "1"
+    - name: itemQuantity
+      value: "-1"
+  assertions:
+    - expression: res.status
+      operator: neq
+      value: "200"
+    - expression: res.body.status
+      operator: neq
+      value: created
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

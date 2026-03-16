@@ -1,0 +1,57 @@
+info:
+  name: Add Orders - Happy Input
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{baseUrl}}/orders"
+  body:
+    type: json
+    data: |-
+      {
+        "itemId": {{itemId}},
+        "quantity": {{itemQuantity}}
+      }
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+runtime:
+  variables:
+    - name: itemId
+      value: "1"
+    - name: itemQuantity
+      value: "1"
+  scripts:
+    - type: after-response
+      code: |-
+        // Get original state 
+        const m = bru.getEnvVar('stateMenuOrg');
+
+        // Original price and quantity 
+        const obj = m[bru.getRequestVar('itemId')-1];
+        const price = obj.price * bru.getRequestVar('itemQuantity'); 
+
+        bru.setVar('priceShould', price);
+        bru.setVar('item_pos',bru.getRequestVar('itemId')-1);
+
+        bru.setVar('orderID', res.body.orderId);
+        bru.setVar('orderID-missing', res.body.orderId.substr(0,9)+'p');
+        bru.setNextRequest("Get Orders");
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body.totalPrice
+      operator: eq
+      value: "{{priceShould}}"
+    - expression: res.body.status
+      operator: eq
+      value: created
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

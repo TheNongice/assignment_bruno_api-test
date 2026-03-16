@@ -1,0 +1,43 @@
+info:
+  name: Add Orders - Enter invalid product id
+  type: http
+  seq: 10
+
+http:
+  method: POST
+  url: "{{baseUrl}}/orders"
+  body:
+    type: json
+    data: |-
+      {
+        "itemId": {{itemId}},
+        "quantity": {{itemQuantity}}
+      }
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+runtime:
+  variables:
+    - name: itemId
+      value: "999"
+    - name: itemQuantity
+      value: "1"
+  scripts:
+    - type: after-response
+      code: bru.setNextRequest('Add Orders - Enter the product id that already stock lack');
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "404"
+    - expression: res.body.status
+      operator: neq
+      value: created
+    - expression: res.body.error
+      operator: isNotEmpty
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

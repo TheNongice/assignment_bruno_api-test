@@ -1,7 +1,7 @@
 info:
-  name: Get Menu -  Before order
+  name: Get Menu -  After order
   type: http
-  seq: 3
+  seq: 7
 
 http:
   method: GET
@@ -17,10 +17,15 @@ runtime:
         // Store the value
         if (Array.isArray(r) && r.length >= 2) {
           bru.setEnvVar("stateMenu", r);
-          bru.setEnvVar("stateMenuOrg", r);
         }
 
-        bru.setNextRequest("Add Orders - Happy case");
+        // Get the original state
+        const originalState = bru.getEnvVar('stateMenuOrg');
+        const item_pos = bru.getVar('item_pos');
+
+        bru.setVar('priceCompare', originalState[item_pos].stock-1);
+
+        bru.setNextRequest("Add Orders - Enter quantity more than stock");
   assertions:
     - expression: res.status
       operator: eq
@@ -30,6 +35,9 @@ runtime:
     - expression: res.body.length
       operator: eq
       value: "2"
+    - expression: res.body[item_pos].stock
+      operator: eq
+      value: "{{priceCompare}}"
 
 settings:
   encodeUrl: true

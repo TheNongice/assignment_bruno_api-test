@@ -5,8 +5,23 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/orders/ORD-379491"
+  url: "{{baseUrl}}/orders/{{orderID}}"
   auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: bru.setNextRequest('Get Orders (Fake order)');
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body.status
+      operator: eq
+      value: created
+    - expression: res.body.totalPrice
+      operator: eq
+      value: "{{priceShould}}"
 
 settings:
   encodeUrl: true
