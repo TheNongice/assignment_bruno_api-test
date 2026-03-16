@@ -1,0 +1,45 @@
+info:
+  name: Add Orders - Happy case
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{baseUrl}}/orders"
+  body:
+    type: json
+    data: |-
+      {
+        "itemId": {{itemId}},
+        "quantity": 1
+      }
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+runtime:
+  variables:
+    - name: itemId
+      value: "{{item.id}}"
+    - name: itemQuantity
+      value: "1"
+  scripts:
+    - type: before-request
+      code: |-
+        const og_state = bru.getEnvVar("stateMenuOrg");
+        // Random item
+        const idx = Math.floor(Math.random() * og_state.length);
+        const item = og_state[ idx > 0 ? idx : 0 ];
+
+        bru.setVar('item',item);
+    - type: after-response
+      code: |-
+        // Save new state
+        const r = res.getBody();
+        bru.setEnvVar('', r);
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

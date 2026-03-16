@@ -1,0 +1,6 @@
+name: local_pc
+variables:
+  - name: baseUrl
+    value: http://127.0.0.1:5000
+  - secret: true
+    name: token

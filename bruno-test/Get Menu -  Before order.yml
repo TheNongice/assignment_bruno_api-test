@@ -1,0 +1,38 @@
+info:
+  name: Get Menu -  Before order
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{baseUrl}}/menu"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const r = res.getBody();
+
+        // Store the value
+        if (Array.isArray(r) && r.length == 2) {
+          bru.setEnvVar("stateMenu", r);
+          bru.setEnvVar("stateMenuOrg", r);
+        }
+
+        bru.setNextRequest("Add Orders - Happy case");
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body
+      operator: isArray
+    - expression: res.body.length
+      operator: eq
+      value: "2"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
