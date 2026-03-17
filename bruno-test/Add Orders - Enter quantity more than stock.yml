@@ -20,9 +20,12 @@ http:
 runtime:
   variables:
     - name: itemId
-      value: "2"
+      value: "1"
     - name: itemQuantity
       value: "2"
+  scripts:
+    - type: after-response
+      code: bru.setNextRequest('Add Orders - Enter the product id that already stock lack');
   assertions:
     - expression: res.status
       operator: neq

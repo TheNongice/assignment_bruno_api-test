@@ -1,7 +1,7 @@
 info:
   name: Add Orders - Enter invalid product id
   type: http
-  seq: 10
+  seq: 12
 
 http:
   method: POST
@@ -23,9 +23,6 @@ runtime:
       value: "999"
     - name: itemQuantity
       value: "1"
-  scripts:
-    - type: after-response
-      code: bru.setNextRequest('Add Orders - Enter the product id that already stock lack');
   assertions:
     - expression: res.status
       operator: eq

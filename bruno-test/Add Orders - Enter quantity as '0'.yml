@@ -1,7 +1,7 @@
 info:
-  name: Add Orders - Enter the product id that already stock lack
+  name: Add Orders - Enter quantity as '0'
   type: http
-  seq: 9
+  seq: 11
 
 http:
   method: POST
@@ -20,21 +20,19 @@ http:
 runtime:
   variables:
     - name: itemId
-      value: "1"
+      value: "2"
     - name: itemQuantity
-      value: "1"
+      value: "0"
   scripts:
     - type: after-response
-      code: bru.setNextRequest('Add Orders - Enter quantity with minus');
+      code: bru.setNextRequest('Add Orders - Enter invalid product id');
   assertions:
     - expression: res.status
-      operator: eq
-      value: "400"
+      operator: neq
+      value: "200"
     - expression: res.body.status
       operator: neq
       value: created
-    - expression: res.body.error
-      operator: isNotEmpty
 
 settings:
   encodeUrl: true

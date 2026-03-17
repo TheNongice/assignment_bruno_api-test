@@ -1,7 +1,7 @@
 info:
   name: Add Orders - Enter quantity with minus
   type: http
-  seq: 9
+  seq: 10
 
 http:
   method: POST
@@ -20,9 +20,12 @@ http:
 runtime:
   variables:
     - name: itemId
-      value: "1"
+      value: "2"
     - name: itemQuantity
       value: "-1"
+  scripts:
+    - type: after-response
+      code: bru.setNextRequest('Add Orders - Enter quantity as \'0\'');
   assertions:
     - expression: res.status
       operator: neq

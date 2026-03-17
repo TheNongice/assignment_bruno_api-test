@@ -1,7 +1,7 @@
 opencollection: 1.0.0
 
 info:
-  name: Auntie Som Test
+  name: Auntie Som Lab
 config:
   proxy:
     inherit: true
