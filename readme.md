@@ -1,6 +1,7 @@
 # Auntie Som Lab - API Testing Report
 > [!NOTE]
 > This forked repository is contains API test cases and backend code for Auntie Som's Noodle Stall assignment.
+> Submited assignments for course `Special Practitioner Topics in Digital Technology II [Section 119]`
 
 Author: Wasawat Junnasaksri, Chulalongkorn University.
 
