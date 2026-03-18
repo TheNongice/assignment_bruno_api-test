@@ -1,3 +1,64 @@
+# Auntie Som Lab - API Testing Report
+> [!NOTE]
+> This forked repository is contains API test cases and backend code for Auntie Som's Noodle Stall assignment.
+
+Author: Wasawat Junnasaksri, Chulalongkorn University.
+
+## What This Lab Covers
+The tests focus on:
+1. Authentication behavior
+2. Order input validation
+3. Stock handling
+4. Price calculation
+5. Error status code correctness
+
+## Bug List
+1. The total price isn't expected with actual value.
+    - `POST: /orders` Given the product 'A' is 30 baht and buy with 2 quantity. The total price expected to show 60 baht but show 55 baht.
+    - For example:
+    ```json
+    { "orderId": "ORD-YYYYY", "status": "created", "totalPrice": 55 }
+    ``` 
+2. Wrong HTTP return status code for get the order that's not created before.
+    - `GET: /orders/<Order_ID>` Given "ORD-YYYYY" is order id that has been assigned but user type wrong at last character into "ORD-YYYYX". The result and status code should show as a not found meaning.
+    - The result is correct but for HTTP status code is show as `200`. So that's is wrong.
+3. User can order with excessed than max of stock.
+    - `POST: /orders` It uses arithmetic to decrease stock quantity by without checking stock remaining.
+    - Your code at line 80 that shown `item["stock"] -= quantity` is explicitly to decrese without checking
+4. User can order with minus quantity
+    - `POST: /orders` The API doesn't verify what user type. Therefore, user can enter quantity with the value less than zero.
+    - Example Input:
+    ```json
+    { "itemId": 2, "quantity": -1 }
+    ```
+    - Example Output:
+    ```json
+    { "orderId": "ORD-YYYYY", "status": "created", "totalPrice": -50 }
+    ```
+    - As you can see. Server is still accept the quantity with minus quantity.
+      - Developer should fix by always verify `quantity` value before created order.
+5. User can order with zero quantity
+    - `POST: /orders` The API doesn't verify what user type. Therefore, user can enter quantity with the value less than or equl with zero.
+    - Example Input:
+    ```json
+    { "itemId": 2, "quantity": 0 }
+    ```
+    - Example Output:
+    ```json
+    { "orderId": "ORD-YYYYY", "status": "created", "totalPrice": -5 }
+    ```
+    - As you can see. Server is still accept the quantity with minus quantity.
+      - Developer should fix by always verify `quantity` value before created order.
+6. Missing itemId is treated like not-found item
+    - When `itemId` is missing, API falls through to `Item not found (404)`.
+Semantically better behavior is `400 Bad Request`.
+    - For example:
+    ```json
+    {"error": "itemId is required"}
+    ```
+
+---
+
 # 🍜 API Testing Lab: Auntie Som’s Noodle Stall
 
 > **Objective:** Prove that Nephew Lek’s "it works on my machine" attitude is a recipe for disaster.
