@@ -1,7 +1,7 @@
 info:
-  name: Add Orders - Enter invalid product id
+  name: Add Orders - Without enter itemId
   type: http
-  seq: 12
+  seq: 13
 
 http:
   method: POST
@@ -10,7 +10,6 @@ http:
     type: json
     data: |-
       {
-        "itemId": {{itemId}},
         "quantity": {{itemQuantity}}
       }
   auth:
@@ -19,22 +18,20 @@ http:
 
 runtime:
   variables:
-    - name: itemId
-      value: "999"
     - name: itemQuantity
       value: "1"
-  scripts:
-    - type: after-response
-      code: bru.setNextRequest('Add Orders - Without enter itemId');
   assertions:
     - expression: res.status
       operator: eq
-      value: "404"
+      value: "400"
     - expression: res.body.status
       operator: neq
       value: created
     - expression: res.body.error
       operator: isNotEmpty
+    - expression: res.body.error
+      operator: neq
+      value: Item not found
 
 settings:
   encodeUrl: true
